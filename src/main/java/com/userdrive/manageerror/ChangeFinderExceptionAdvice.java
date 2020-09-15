@@ -1,6 +1,7 @@
 package com.userdrive.manageerror;
 
 import java.nio.file.AccessDeniedException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -18,7 +19,7 @@ public class ChangeFinderExceptionAdvice {
 	    ex.printStackTrace();
 		return "Directory not found! "
 				+ "Please make sure value of dirpath is passed in valid spelling and format: "
-				+ "for example, dirpath=d:/my-documents/bills";
+				+ "for example, dirpath=\"d:/my-documents/bills\"";
 	  }
 	
 	@ResponseBody
@@ -36,6 +37,14 @@ public class ChangeFinderExceptionAdvice {
 	    ex.printStackTrace();
 		return "Missing parameter: "+ex.getParameterName()+ "";
 	  }
+	@ResponseBody
+	  @ExceptionHandler(InvalidPathException.class)
+	  @ResponseStatus(HttpStatus.NOT_FOUND)
+	  String invalidPathExceptionHandler(InvalidPathException ex) {
+	    ex.printStackTrace();
+		return "Invalid Path, if a path contains space, please enclose it in double quotes. Example, dirpath=\"D:/Project/CRM Workspace\" ";
+	  }
+	
 	
 	
 }

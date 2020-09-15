@@ -10,16 +10,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.userdrive.model.File;
 
-@Repository
+@Service
 public class ChangeFinderService {
 	
 	
 	public List<File> getLastModifiedFiles(String dirPath, int n) throws IOException {
-		
+		if(dirPath.startsWith("\"") && dirPath.endsWith("\"")) 
+			dirPath = dirPath.substring(1, dirPath.length()-1); 
+		final String userdirpath = dirPath;
 		PriorityQueue<File> pq = new PriorityQueue<>(new Comparator<File>() {
 			@Override
 			public int compare(File o1, File o2) {
@@ -31,7 +33,7 @@ public class ChangeFinderService {
 		Files.find(Paths.get(dirPath),
 		           Integer.MAX_VALUE,
 		           (filePath, fileAttr) -> fileAttr.isRegularFile())
-		        .forEach(path -> addLastModifiedFiles(path, pq, n, dirPath))  ;
+		        .forEach(path -> addLastModifiedFiles(path, pq, n, userdirpath))  ;
 		
 		
 		List<File> resList = new ArrayList<>();
